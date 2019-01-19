@@ -1,62 +1,66 @@
-struct Html { }
+import Html
 
-struct Page {
-    let template: AnyTemplate.Type
-    let props: AnyEquatable
+public struct Page {
+  let template: AnyTemplate.Type
+  let props: AnyEquatable
 }
 
 public struct AnyEquatable: Equatable {
-    public let value: Any
-    private let equals: (Any) -> Bool
-    
-    public init<E: Equatable>(_ value: E) {
-        self.value = value
-        self.equals = { ($0 as? E) == value }
-    }
-    
-    public static func == (lhs: AnyEquatable, rhs: AnyEquatable) -> Bool {
-        return lhs.equals(rhs.value) || rhs.equals(lhs.value)
-    }
+  public let value: Any
+  private let equals: (Any) -> Bool
+
+  public init<E: Equatable>(_ value: E) {
+    self.value = value
+    equals = { ($0 as? E) == value }
+  }
+
+  public static func ==(lhs: AnyEquatable, rhs: AnyEquatable) -> Bool {
+    return lhs.equals(rhs.value) || rhs.equals(lhs.value)
+  }
 }
 
-protocol AnyTemplate {
-}
+public protocol AnyTemplate {}
 
-protocol Template: AnyTemplate {
-    associatedtype Props: Equatable
-    
-    static func children(_: Props) -> [String: Page]
-    
-    static func render(_: Props) -> Html
+public protocol Template: AnyTemplate {
+  associatedtype Props: Equatable
+
+  static func children(_: Props) -> [String: Page]
+
+  static func render(_: Props) -> Node
 }
 
 extension Template {
-    static func children(_: Props) -> [String: Page] {
-        return [:]
-    }
-    
-    static func page(_ props: Props) -> Page {
-        return Page(template: self, props: AnyEquatable(props))
-    }
+  public static func children(_: Props) -> [String: Page] {
+    return [:]
+  }
+
+  public static func page(_ props: Props) -> Page {
+    return Page(template: self, props: AnyEquatable(props))
+  }
 }
 
-struct Null: Equatable {}
+public struct Null: Equatable {}
+
+extension Template where Props == Null {
+  public static func page() -> Page {
+    return page(Null())
+  }
+}
 
 struct Index: Template {
-    static func children(_: Props) -> [String: Page] {
-        return Dictionary(uniqueKeysWithValues: (0..<5).map { 
-            ("\($0)", Post.page(Null()))
-        })
-    }
-    
-    static func render(_: Null) -> Html {
-        return Html()
-    }
+  static func children(_: Props) -> [String: Page] {
+    return Dictionary(uniqueKeysWithValues: (0..<5).map {
+      ("\($0)", Post.page())
+    })
+  }
+
+  static func render(_: Null) -> Node {
+    return html([body([Node.raw("<p></p>")])])
+  }
 }
 
 struct Post: Template {
-    static func render(_: Null) -> Html {
-        return Html()
-    }
+  static func render(_: Null) -> Node {
+    return html([])
+  }
 }
-
