@@ -21,8 +21,8 @@ let package = Package(
       from: "0.2.0"
     ),
     .package(
-      url: "https://github.com/vapor-community/markdown.git",
-      from: "0.4.0"
+      url: "https://github.com/flight-labs/Apodimark.git",
+      from: "0.7.4"
     ),
   ],
   targets: [
@@ -32,7 +32,7 @@ let package = Package(
     // packages which this package depends on.
     .target(
       name: "Kara",
-      dependencies: ["Html", "SwiftMarkdown"]
+      dependencies: ["Html", "Apodimark"]
     ),
   ]
 )

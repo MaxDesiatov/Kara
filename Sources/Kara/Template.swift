@@ -1,5 +1,10 @@
 import Html
 
+public protocol AnyTemplate {
+  static func render(props: AnyEquatable) -> Node
+  static func children(props: AnyEquatable) -> [String: Page]
+}
+
 public struct Page {
   let template: AnyTemplate.Type
   let props: AnyEquatable
@@ -19,14 +24,30 @@ public struct AnyEquatable: Equatable {
   }
 }
 
-public protocol AnyTemplate {}
-
 public protocol Template: AnyTemplate {
   associatedtype Props: Equatable
 
-  static func children(_: Props) -> [String: Page]
+  static func children(props: Props) -> [String: Page]
 
-  static func render(_: Props) -> Node
+  static func render(props: Props) -> Node
+}
+
+extension Template {
+  static func children(props: AnyEquatable) -> [String: Page] {
+    guard let props = props.value as? Props else {
+      fatalError("incorrect type of `props` passed to `AnyTemplate.render`")
+    }
+
+    return children(props: props)
+  }
+
+  static func render(props: AnyEquatable) -> Node {
+    guard let props = props.value as? Props else {
+      fatalError("incorrect type of `props` passed to `AnyTemplate.render`")
+    }
+
+    return render(props: props)
+  }
 }
 
 extension Template {
@@ -44,23 +65,5 @@ public struct Null: Equatable {}
 extension Template where Props == Null {
   public static func page() -> Page {
     return page(Null())
-  }
-}
-
-struct Index: Template {
-  static func children(_: Props) -> [String: Page] {
-    return Dictionary(uniqueKeysWithValues: (0..<5).map {
-      ("\($0)", Post.page())
-    })
-  }
-
-  static func render(_: Null) -> Node {
-    return html([body([Node.raw("<p></p>")])])
-  }
-}
-
-struct Post: Template {
-  static func render(_: Null) -> Node {
-    return html([])
   }
 }

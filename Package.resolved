@@ -2,21 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "cmark",
-        "repositoryURL": "https://github.com/brokenhandsio/cmark-gfm.git",
+        "package": "Apodimark",
+        "repositoryURL": "https://github.com/flight-labs/Apodimark.git",
         "state": {
           "branch": null,
-          "revision": "351e5cb1bc6a43567b8ff9b9b3f7357c58bdda83",
-          "version": "1.0.1"
-        }
-      },
-      {
-        "package": "SwiftMarkdown",
-        "repositoryURL": "https://github.com/vapor-community/markdown.git",
-        "state": {
-          "branch": null,
-          "revision": "aea4876786fa284f6d86af1ce3436a17e22035b5",
-          "version": "0.4.0"
+          "revision": "100d63048ba6701602050478d9087d2cb97ca3a9",
+          "version": "0.7.4"
         }
       },
       {
