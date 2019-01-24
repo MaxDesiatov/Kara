@@ -1,8 +1,17 @@
 import Html
 
+public struct Rendered {
+  public let node: Node
+  public let children: [String: Page]
+
+  public init(_ node: Node, children: [String: Page] = [:]) {
+    self.node = node
+    self.children = children
+  }
+}
+
 public protocol AnyTemplate {
-  static func render(props: AnyEquatable) -> Node
-  static func children(props: AnyEquatable) -> [String: Page]
+  static func render(props: AnyEquatable) -> Rendered
 }
 
 public struct Page {
@@ -27,21 +36,11 @@ public struct AnyEquatable: Equatable {
 public protocol Template: AnyTemplate {
   associatedtype Props: Equatable
 
-  static func children(props: Props) -> [String: Page]
-
-  static func render(props: Props) -> Node
+  static func render(props: Props) -> Rendered
 }
 
 extension Template {
-  static func children(props: AnyEquatable) -> [String: Page] {
-    guard let props = props.value as? Props else {
-      fatalError("incorrect type of `props` passed to `AnyTemplate.render`")
-    }
-
-    return children(props: props)
-  }
-
-  static func render(props: AnyEquatable) -> Node {
+  static func render(props: AnyEquatable) -> Rendered {
     guard let props = props.value as? Props else {
       fatalError("incorrect type of `props` passed to `AnyTemplate.render`")
     }

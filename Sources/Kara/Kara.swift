@@ -11,7 +11,8 @@ import Html
 public func kara(_ page: Page, destination: String) throws {
   let manager = FileManager()
 
-  let data = render(page.template.render(props: page.props)).data(using: .utf8)
+  let data = render(page.template.render(props: page.props).node)
+    .data(using: .utf8)
 
   manager.createFile(atPath: destination, contents: data)
 }
